@@ -44,7 +44,7 @@ def get_highest_spending_users():
 
     highest_spending_users = sorted(expenses_by_user.items(), key=lambda item: item[1], reverse=True)
 
-    return highest_spending_users
+    return highest_spending_users[:10]
 
 def get_best_selling_products():
     """Get report of best selling products"""
@@ -58,7 +58,7 @@ def get_best_selling_products():
     sales_by_product = {
         product_id: int(r.get(product_id) or 0)
         for order in orders
-        for item in order.items
+        for item in order.order_items
         for product_id in [item.product_id]
     }
     best_selling_products = []

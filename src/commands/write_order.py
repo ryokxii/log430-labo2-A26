@@ -100,11 +100,18 @@ def delete_order(order_id: int):
 def add_order_to_redis(order_id, user_id, total_amount, items):
     """Insert order to Redis"""
     r = get_redis_conn()
+    r.hset(f"order:{order_id}", mapping={
+        "user_id": user_id,
+        "total_amount": total_amount,
+        "items": str(items)
+    })
     print(r)
 
 def delete_order_from_redis(order_id):
     """Delete order from Redis"""
-    pass
+    r = get_redis_conn()
+    r.delete(f"order:{order_id}")
+    print(r)
 
 def sync_all_orders_to_redis():
     """ Sync orders from MySQL to Redis """
@@ -115,10 +122,10 @@ def sync_all_orders_to_redis():
     try:
         if len(orders_in_redis) == 0:
             # mysql
-            orders_from_mysql = []
+            orders_from_mysql = get_orders_from_mysql()
             for order in orders_from_mysql:
                 # TODO: terminez l'implementation
-                add_order_to_redis(order.id, order.user_id, order.total_amount, order.items)
+                add_order_to_redis(order.id, order.user_id, order.total_amount, order.order_items)
                 print(order)
             rows_added = len(orders_from_mysql)
         else:

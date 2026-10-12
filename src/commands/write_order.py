@@ -6,8 +6,8 @@ Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 from models.product import Product
 from models.order_item import OrderItem
 from models.order import Order
-from queries.read_order import get_orders_from_mysql
 from db import get_sqlalchemy_session, get_redis_conn
+from queries.read_order import get_orders_from_mysql
 
 def add_order(user_id: int, items: list):
     """Insert order with items in MySQL, keep Redis in sync"""
@@ -110,7 +110,7 @@ def sync_all_orders_to_redis():
     """ Sync orders from MySQL to Redis """
     # redis
     r = get_redis_conn()
-    orders_in_redis = r.keys(f"order:*")
+    orders_in_redis = r.keys("order:*")
     rows_added = 0
     try:
         if len(orders_in_redis) == 0:
@@ -118,6 +118,7 @@ def sync_all_orders_to_redis():
             orders_from_mysql = []
             for order in orders_from_mysql:
                 # TODO: terminez l'implementation
+                add_order_to_redis(order.id, order.user_id, order.total_amount, order.items)
                 print(order)
             rows_added = len(orders_from_mysql)
         else:

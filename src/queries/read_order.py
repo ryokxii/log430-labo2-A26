@@ -49,14 +49,9 @@ def get_highest_spending_users():
 def get_best_selling_products():
     """Get report of best selling products"""
     r = get_redis_conn()
-    orders = get_orders_from_redis()
-
     sales_by_product = {
-        product_id: int(r.get(product_id) or 0)
-        for order in orders
-        for item in order["items"]
-        for product_id in [item["product_id"]]
+        key.split(":")[1]: int(r.get(key))
+        for key in r.keys("product:*")
     }
-    best_selling_products = []
     best_selling_products = sorted(sales_by_product.items(), key=lambda item: item[1], reverse=True)
     return best_selling_products

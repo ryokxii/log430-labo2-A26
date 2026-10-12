@@ -125,7 +125,10 @@ def sync_all_orders_to_redis():
             orders_from_mysql = get_orders_from_mysql()
             for order in orders_from_mysql:
                 # TODO: terminez l'implementation
-                add_order_to_redis(order.id, order.user_id, order.total_amount, order.order_items)
+                items = [{"product_id": item.product_id, "quantity": item.quantity} for item in order.order_items]
+                add_order_to_redis(order.id, order.user_id, order.total_amount, items)
+                for item in items:
+                    r.incr(f"product:{item['product_id']}", int(item["quantity"]))
                 print(order)
             rows_added = len(orders_from_mysql)
         else:

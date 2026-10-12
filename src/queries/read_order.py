@@ -40,7 +40,7 @@ def get_highest_spending_users():
     orders = get_orders_from_redis()
     expenses_by_user = defaultdict(float)
     for order in orders:
-        expenses_by_user[order.user_id] += order.total
+        expenses_by_user[order["user_id"]] += float(order["total_amount"])
 
     highest_spending_users = sorted(expenses_by_user.items(), key=lambda item: item[1], reverse=True)
 
@@ -51,15 +51,11 @@ def get_best_selling_products():
     r = get_redis_conn()
     orders = get_orders_from_redis()
 
-    for order in orders:
-        for item in order.items:
-            r.incr(item.product_id, item.quantity)
-
     sales_by_product = {
         product_id: int(r.get(product_id) or 0)
         for order in orders
-        for item in order.order_items
-        for product_id in [item.product_id]
+        for item in order["items"]
+        for product_id in [item["product_id"]]
     }
     best_selling_products = []
     best_selling_products = sorted(sales_by_product.items(), key=lambda item: item[1], reverse=True)

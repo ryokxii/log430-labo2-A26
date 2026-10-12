@@ -15,7 +15,7 @@ def show_highest_spending_users():
             </ul> """ for user_id, total_spent in highest_spending_users]  
     return get_template(f"""
             <ul>
-                <h2>Les utilisateurs ayant dépensé le plus</h2>
+                <h2>Les plus gros acheteurs</h2>
                 {" ".join(rows)}
             </ul>
     """)  

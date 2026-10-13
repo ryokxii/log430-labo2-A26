@@ -4,7 +4,7 @@ SPDX - License - Identifier: LGPL - 3.0 - or -later
 Auteurs : Gabriel C. Ullmann, Fabio Petrillo, 2025
 """
 from views.template_view import get_template, get_param
-from controllers.report_controller import get_report_highest_spending_users, get_report_best_selling_products
+from controllers.order_controller import get_report_highest_spending_users, get_report_best_selling_products
 
 def show_highest_spending_users():
     """ Show report of highest spending users """
